@@ -1,0 +1,13 @@
+{
+  "name": "Akshara Kali",
+  "short_name": "Akshara Kali",
+  "description": "Learn Malayalam letters and words with pictures, sound, flashcards and matching games.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fbf7ec",
+  "theme_color": "#fbf7ec",
+  "icons": [
+    {"src": "/icon-192.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "/icon-512.png", "sizes": "512x512", "type": "image/png"}
+  ]
+}

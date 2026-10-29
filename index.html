@@ -11,7 +11,11 @@
 <meta property="og:title" content="Akshara Kali">
 <meta property="og:description" content="Learn Malayalam letters and words with pictures, sound, flashcards and matching games.">
 <meta property="og:type" content="website">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23fbf7ec'/%3E%3Ccircle cx='20' cy='22' r='9' fill='%23e8465b'/%3E%3Ccircle cx='44' cy='22' r='9' fill='%232f7fd6'/%3E%3Ccircle cx='20' cy='44' r='9' fill='%23f28c28'/%3E%3Ccircle cx='44' cy='44' r='9' fill='%232fa564'/%3E%3C/svg%3E">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="apple-mobile-web-app-title" content="Akshara Kali">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+Chettan+2:wght@600;800&family=Nunito:wght@500;700;800&family=Noto+Sans+Malayalam:wght@400;600;700&display=swap">
 <style>
 /* Layout: one centered column. Header, letter picker, mode tabs, one play stage. Palette follows the rainbow letters on the Akshara Mela poster. */
@@ -40,7 +44,7 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font
   padding-block:max(20px,env(safe-area-inset-top,0px)) calc(48px + env(safe-area-inset-bottom,0px));
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 .wrap{max-width:900px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
-button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;-webkit-tap-highlight-color:transparent}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;-webkit-tap-highlight-color:transparent;touch-action:manipulation;-webkit-user-select:none;user-select:none}
 button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,.fcard:focus-visible{outline:3px solid var(--k4);outline-offset:2px}
 svg{display:block}
 
@@ -124,8 +128,8 @@ h1 span:nth-child(1){color:var(--k0)} h1 span:nth-child(2){color:var(--k1)} h1 s
 .reveal{display:flex;align-items:center;justify-content:center;gap:10px;font-family:var(--ml);font-size:1.9rem;font-weight:700;min-height:44px}
 .reveal mark{background:none;color:var(--ok)}
 .opts{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.opt{aspect-ratio:1/.8;border-radius:20px;border:3px solid var(--line);background:var(--bg);font-family:var(--ml);font-size:clamp(2.2rem,10vw,3.4rem);font-weight:700;color:var(--ink)}
-.opt.right{background:color-mix(in srgb,var(--ok) 25%,var(--paper));border-color:var(--ok)}
+.opt{display:grid;place-items:center;aspect-ratio:1/.8;border-radius:20px;border:3px solid var(--line);background:var(--bg);font-family:var(--ml);font-size:clamp(2.2rem,10vw,3.4rem);font-weight:700;color:var(--ink)}
+.opt.correct{background:color-mix(in srgb,var(--ok) 25%,var(--paper));border-color:var(--ok)}
 .opt.wrong{background:color-mix(in srgb,var(--bad) 20%,var(--paper));border-color:var(--bad)}
 .center{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;min-height:46px}
 
@@ -169,7 +173,8 @@ h1 span:nth-child(1){color:var(--k0)} h1 span:nth-child(2){color:var(--k1)} h1 s
 .word .rom,.word .en{font-size:.8rem;color:var(--muted);font-weight:700}
 .word .lt{position:absolute;left:8px;top:6px;font-family:var(--ml);font-weight:700;color:var(--c);font-size:.95rem}
 .word .ok{position:absolute;left:8px;bottom:6px;width:18px;height:18px;border-radius:50%;background:var(--ok);color:#fff;font-size:.65rem;font-weight:800;display:grid;place-items:center}
-.word .spk{width:30px;height:30px}
+.word .spk{top:6px;right:6px;width:32px;height:32px}
+.cw .spk{z-index:3}
 .word .spk svg{width:16px;height:16px}
 details{border-top:2px dashed var(--line);padding-top:14px}
 summary{cursor:pointer;font-weight:800}
@@ -214,8 +219,22 @@ summary{cursor:pointer;font-weight:800}
 .win{text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px;padding:8px 0}
 .stars{font-size:2.4rem;letter-spacing:.1em;color:var(--k2)}
 .foot{color:var(--muted);font-size:.85rem;text-align:center;margin:0}
+@media (pointer:coarse){.cw .spk{width:36px;height:36px}.spk.inl{width:40px;height:40px}}
 @media (max-width:520px){
-  .cols{column-gap:40px}
+  .tools{width:100%}
+  .tool{padding:7px 12px;font-size:.82rem}
+  .tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+  .tab{padding:9px 4px;font-size:.85rem;text-align:center}
+  .stage h2{font-size:1.3rem}
+  .card.wordc{padding:8px 36px 8px 8px}
+  .card .ml{font-size:1.25rem}
+  .card .em{font-size:2.2rem}
+  .opts{gap:8px}
+  .fcard{min-height:280px}
+  .fcard .big-ml{font-size:2.2rem}
+  .bank{grid-template-columns:repeat(2,1fr)}
+  .lgrid{gap:6px}
+  .cols{column-gap:32px}
   .grid{grid-template-columns:repeat(3,1fr)}
   .ldetail{grid-template-columns:1fr;justify-items:center;text-align:center}
 }
@@ -231,7 +250,6 @@ summary{cursor:pointer;font-weight:800}
     </div>
     <div class="tools">
       <button class="tool" id="themeBtn" data-act="theme" aria-label="Switch between light and dark"></button>
-      <button class="tool" id="soundBtn" data-act="sound" aria-pressed="true"></button>
       <button class="tool" data-act="qr" aria-label="Show a QR code to share this app">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v1M14 20h1M18 18h3v3h-3z"/></svg>Share
       </button>
@@ -328,7 +346,7 @@ function buildWords() {
   LETTERS.forEach(L => L.w.forEach((w, i) => WORDS.push({id: L.l + i, l: L.l, ml: w[0], rom: w[1], en: w[2], pic: w[3], audio: w[4]})));
   custom.forEach((c, i) => WORDS.push({id: 'c' + i, l: c.l, ml: c.ml, rom: '', en: c.en, pic: c.pic, custom: true}));
 }
-const S = {mode: 'match', sel: ['ക', 'മ'], sound: load('ak-sound', true), front: 'pic', lesson: {tab: 'vowels', cur: 'അ'}};
+const S = {mode: 'match', sel: ['ക', 'മ'], front: 'pic', lesson: {tab: 'vowels', cur: 'അ'}};
 const pool = () => { const p = WORDS.filter(w => S.sel.includes(w.l)); return p.length ? p : WORDS; };
 /* a set of n words for a game: no repeated pictures or words, topped up to at least 4 */
 function gamePool(n) {
@@ -385,7 +403,6 @@ function speakText(t) {            // last resort: the device's own voice
   } catch (e) {}
 }
 const sayWord = w => playText(w.ml, w.audio);
-const autoSay = w => { if (S.sound && w) sayWord(w); };
 function noteSoundFail() {
   if (noteDismissed) return;
   $('#voiceMsg').textContent = 'The sound could not load. Check your internet connection and try again.';
@@ -406,8 +423,8 @@ function warm(words) {
 const ART = {
   chips: '<span class="chip on" style="--c:var(--k0)">ക</span><span class="chip on" style="--c:var(--k4)">മ</span>',
   pic: '<div class="card pic sel" style="width:110px"><span class="em">🚗</span><span class="en">car</span></div>',
-  pair: '<div class="card pic done" style="width:100px"><span class="em">🚗</span><span class="en">car</span></div><span class="mline"></span><div class="card done" style="width:120px"><span class="ml">കാർ<span class="rom">kaar</span></span></div>',
-  wrong: '<div class="card pic shake" style="width:100px;animation:none"><span class="em">🚗</span><span class="en">car</span></div><span style="font-size:1.6rem">✗</span><div class="card" style="width:120px"><span class="ml">മരം<span class="rom">maram</span></span></div>',
+  pair: '<div class="card pic done" style="width:100px"><span class="em">🚗</span><span class="en">car</span></div><span class="mline"></span><div class="card done" style="width:120px"><span class="ml">കാർ</span></div>',
+  wrong: '<div class="card pic shake" style="width:100px;animation:none"><span class="em">🚗</span><span class="en">car</span></div><span style="font-size:1.6rem">✗</span><div class="card" style="width:120px"><span class="ml">മരം</span></div>',
   say: '<button class="spk lbl" tabindex="-1">' + SPK_SVG + 'Hear it</button>',
   fc: '<div class="fcard" style="min-height:170px;width:190px;padding:46px 10px 10px;cursor:default"><span class="spk" style="top:8px;right:8px;width:36px;height:36px">' + SPK_SVG + '</span><span class="em" style="font-size:3rem">🐘</span></div>',
   swipe: '<span style="font-size:1.3rem;font-weight:800;color:var(--k1)">&larr; still learning</span><span style="font-size:1.3rem;font-weight:800;color:var(--ok)">I know it &rarr;</span>'
@@ -440,7 +457,7 @@ const TOURS = {
     {t:'Find them all', d:'Face-up words have a small speaker. Fewer flips earns more stars.', art:'<span class="stars">★★★</span>'}
   ],
   bank: [
-    {t:'Your word bank', d:'Every word with its picture and English meaning. Tap any card to hear it.', art:'<div class="word" style="--c:var(--k3);width:140px"><span class="em">🐘</span><span class="ml">ആന</span><span class="rom">aana</span></div>'},
+    {t:'Your word bank', d:'Every word with its picture and English meaning. Press the speaker on a card to hear it.', art:'<div class="word" style="--c:var(--k3);width:140px"><span class="em">🐘</span><span class="ml">ആന</span></div>'},
     {t:'Filter by letter', d:'Choose up to two letters at the top to see only their words. Choose All letters to see everything.', art:ART.chips},
     {t:'Add your own words', d:'Open Add your own word at the bottom. Your words join every game. A green tick marks words you know from the flashcards.', art:'<span style="font-size:2rem">➕</span>'}
   ]
@@ -489,7 +506,7 @@ const MODES = [['learn','Learn letters'],['flash','Flashcards'],['match','Match'
 const SUN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
 const MOON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></svg>';
 function curTheme() { return document.documentElement.getAttribute('data-theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); }
-function drawTheme() { const d = curTheme() === 'dark'; $('#themeBtn').innerHTML = (d ? SUN : MOON) + (d ? 'Light mode' : 'Dark mode'); }
+function drawTheme() { const d = curTheme() === 'dark'; $('#themeBtn').innerHTML = (d ? SUN : MOON) + (d ? 'Light' : 'Dark'); }
 function drawChrome() {
   $('#chips').innerHTML = LETTERS.map(L =>
     `<button class="chip" style="--c:${colorOf(L.l)}" data-act="letter" data-l="${L.l}" aria-pressed="${S.sel.includes(L.l)}" title="${L.r}">${L.l}</button>`).join('') +
@@ -499,12 +516,21 @@ function drawChrome() {
   $('#pkBtn').innerHTML = `<span class="cur">My letters: ${S.sel.length ? S.sel.map(l => '<b>' + l + '</b>').join('') : '<b style="font-family:var(--body);font-size:1rem">All</b>'}</span><span class="chg">${pkOpen ? 'Done' : 'Change'}</span>`;
   $('#pkBtn').setAttribute('aria-expanded', pkOpen);
   $('#chips').hidden = !pkOpen;
-  $('#soundBtn').setAttribute('aria-pressed', S.sound);
-  $('#soundBtn').innerHTML = SPK_SVG + (S.sound ? 'Auto sound on' : 'Auto sound off');
   $('#foot').textContent = `${WORDS.length} words in the bank. You know ${[...known].filter(id => WORDS.some(w => w.id === id)).length} so far.`;
   drawTheme();
 }
 const helpBtn = m => `<button class="help" data-act="tour" data-m="${m}" aria-label="How to play">?</button>`;
+function firstUnit(word) {   // first written unit (consonant + vowel sign, or a whole conjunct), never half a letter
+  try {
+    if (window.Intl && Intl.Segmenter) {
+      const seg = [...new Intl.Segmenter('ml', {granularity: 'grapheme'}).segment(word)].map(x => x.segment);
+      let u = seg[0] || '', k = 1;
+      while (u.endsWith('\u0D4D') && k < seg.length) u += seg[k++];
+      return u;
+    }
+  } catch (e) {}
+  return word;
+}
 const stars = n => '★'.repeat(n) + '☆'.repeat(3 - n);
 
 /* =====================================================================
@@ -555,7 +581,7 @@ function drawFlash() {
   }
   const w = F.q[F.i];
   const pic = `<span class="em">${w.pic}</span><span class="en">${esc(w.en)}</span>`;
-  const word = `<span class="big-ml">${esc(w.ml)}</span>${w.rom ? `<span class="rom">${esc(w.rom)}</span>` : ''}`;
+  const word = `<span class="big-ml">${esc(w.ml)}</span>`;
   const front = S.front === 'pic' ? pic : word;
   const back = S.front === 'pic' ? word + `<span class="en">${esc(w.en)}</span>` : pic;
   $('#stage').innerHTML = head + `
@@ -625,7 +651,7 @@ function drawMatch() {
   const card = (w, side) => {
     const done = M.done.has(w.id), on = M.pick && M.pick.id === w.id && M.pick.side === side;
     const shake = M.shake && M.shake.includes(w.id + side);
-    const inner = side === 'L' ? `<span class="em">${w.pic}</span><span class="en">${esc(w.en)}</span>` : `<span class="ml">${esc(w.ml)}${w.rom ? `<span class="rom">${esc(w.rom)}</span>` : ''}</span>`;
+    const inner = side === 'L' ? `<span class="em">${w.pic}</span><span class="en">${esc(w.en)}</span>` : `<span class="ml">${esc(w.ml)}</span>`;
     return `<div class="cw"><button class="card ${side === 'L' ? 'pic' : 'wordc'} ${done ? 'done' : ''} ${shake ? 'shake' : ''}" data-act="mpick" data-id="${esc(w.id)}" data-side="${side}" aria-pressed="${!!on}" ${done ? 'disabled' : ''}>${inner}</button>${side === 'R' ? spkWord(w.id) : ''}</div>`;
   };
   $('#stage').innerHTML = `
@@ -652,7 +678,7 @@ function drawLines() {
 function matchTap(id, side) {
   const w = M.p.find(x => x.id === id);
   if (!M.pick || M.pick.side === side) { M.pick = {id, side}; drawMatch(); return; }
-  if (M.pick.id === id) { M.done.add(id); M.pick = null; autoSay(w); drawMatch(); return; }
+  if (M.pick.id === id) { M.done.add(id); M.pick = null; drawMatch(); return; }
   M.miss++; M.shake = [M.pick.id + M.pick.side, id + side]; M.pick = null; drawMatch();
   setTimeout(() => { M.shake = null; if (S.mode === 'match') drawMatch(); }, 420);
 }
@@ -678,12 +704,12 @@ function drawPick() {
     return;
   }
   const w = P.q[P.i];
-  const reveal = P.ans ? `<span><mark>${esc(w.l)}</mark>${esc(w.ml.slice(w.l.length))}</span>${spkWord(w.id, 'inl')}` : spkWord(w.id, 'lbl', 'Hear it');
+  const reveal = P.ans ? `<span><mark>${esc(firstUnit(w.ml))}</mark>${esc(w.ml.slice(firstUnit(w.ml).length))}</span>${spkWord(w.id, 'inl')}` : spkWord(w.id, 'lbl', 'Hear it');
   $('#stage').innerHTML = head(dots) + `
     <div class="big"><span class="em">${w.pic}</span><span class="en">${esc(w.en)}</span></div>
     <div class="reveal">${reveal}</div>
     <div class="opts">${P.opts.map(o => {
-      const cls = P.ans ? (o === w.l ? 'right' : o === P.ans ? 'wrong' : '') : '';
+      const cls = P.ans ? (o === w.l ? 'correct' : o === P.ans ? 'wrong' : '') : '';
       return `<button class="opt ${cls}" data-act="popt" data-l="${o}" ${P.ans && o !== P.ans && o !== w.l ? 'disabled' : ''}>${o}</button>`; }).join('')}</div>
     <div class="center">${P.ans ? `<button class="btn" data-act="pnext">${P.i + 1 < P.q.length ? 'Next' : 'See result'}</button>` : ''}</div>`;
 }
@@ -691,7 +717,7 @@ function pickTap(l) {
   if (P.ans) return;
   const w = P.q[P.i]; P.ans = l; P.res[P.i] = l === w.l ? 1 : 0;
   if (l === w.l) P.score++;
-  autoSay(w); drawPick();
+  drawPick();
 }
 
 /* =====================================================================
@@ -720,7 +746,7 @@ function flip(i) {
   if (Y.open.length === 2) {
     Y.moves++;
     const [a, b] = Y.open.map(x => Y.cards[x]);
-    if (a.k === b.k && a.t !== b.t) { Y.won.add(a.k); Y.open = []; autoSay(a.w); }
+    if (a.k === b.k && a.t !== b.t) { Y.won.add(a.k); Y.open = []; }
     else { Y.lock = true; drawMemory(); setTimeout(() => { Y.open = []; Y.lock = false; if (S.mode === 'memory') drawMemory(); }, 1100); return; }
   }
   drawMemory();
@@ -732,8 +758,8 @@ function flip(i) {
 function drawBank() {
   const list = pool();
   $('#stage').innerHTML = `
-    <div class="bar"><div><h2>Word bank</h2><p class="lede">Tap any card to hear the word. ${S.sel.length ? 'Showing your letters.' : 'Showing every letter.'}</p></div><div class="right"><span class="stat">${list.length} words</span>${helpBtn('bank')}</div></div>
-    <div class="bank">${list.map(w => `<button class="word" style="--c:${colorOf(w.l)}" data-act="say" data-id="${esc(w.id)}"><span class="lt">${esc(w.l)}</span>${known.has(w.id) ? '<span class="ok" title="You know this word">✓</span>' : ''}<span class="em">${w.pic}</span><span class="ml">${esc(w.ml)}</span>${w.rom ? `<span class="rom">${esc(w.rom)}</span>` : ''}<span class="en">${esc(w.en)}</span><span class="spk inl" aria-hidden="true">${SPK_SVG}</span></button>`).join('')}</div>
+    <div class="bar"><div><h2>Word bank</h2><p class="lede">Press the speaker on a card to hear the word. ${S.sel.length ? 'Showing your letters.' : 'Showing every letter.'}</p></div><div class="right"><span class="stat">${list.length} words</span>${helpBtn('bank')}</div></div>
+    <div class="bank">${list.map(w => `<div class="word" style="--c:${colorOf(w.l)}"><span class="lt">${esc(w.l)}</span>${known.has(w.id) ? '<span class="ok" title="You know this word">✓</span>' : ''}<span class="em">${w.pic}</span><span class="ml">${esc(w.ml)}</span><span class="en">${esc(w.en)}</span>${spkWord(w.id)}</div>`).join('')}</div>
     <details>
       <summary>Add your own word</summary>
       <form class="form" id="addForm">
@@ -764,7 +790,6 @@ document.addEventListener('click', e => {
     case 'all': S.sel = []; render(); break;
     case 'togglepk': pkOpen = !pkOpen; drawChrome(); break;
     case 'mode': S.mode = t.dataset.m; render(); break;
-    case 'sound': S.sound = !S.sound; save('ak-sound', S.sound); drawChrome(); break;
     case 'theme': { const n = curTheme() === 'dark' ? 'light' : 'dark'; document.documentElement.setAttribute('data-theme', n); save('ak-theme', n); drawTheme(); break; }
     case 'qr': showQR(); break;
     case 'dismissnote': noteDismissed = true; $('#voiceNote').hidden = true; break;
@@ -775,7 +800,7 @@ document.addEventListener('click', e => {
     case 'again': render(); break;
     case 'say': { if (t.dataset.t) playText(t.dataset.t); else { const w = WORDS.find(x => x.id === t.dataset.id); if (w) sayWord(w); } break; }
     case 'ltab': S.lesson.tab = t.dataset.t; drawLearn(); break;
-    case 'lpick': S.lesson.cur = t.dataset.l; drawLearn(); playText(t.dataset.l); break;
+    case 'lpick': S.lesson.cur = t.dataset.l; drawLearn(); break;
     case 'practise': S.sel = [t.dataset.l]; S.mode = 'match'; render(); break;
     case 'front': S.front = t.dataset.f; drawFlash(); break;
     case 'fflip': F.flip = !F.flip; drawFlash(); break;
