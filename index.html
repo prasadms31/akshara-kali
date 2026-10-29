@@ -1,0 +1,815 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>Akshara Kali</title>
+<meta name="description" content="Learn Malayalam letters and words with pictures, sound, flashcards and matching games.">
+<meta name="theme-color" content="#fbf7ec">
+<meta name="referrer" content="no-referrer">
+<meta property="og:title" content="Akshara Kali">
+<meta property="og:description" content="Learn Malayalam letters and words with pictures, sound, flashcards and matching games.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23fbf7ec'/%3E%3Ccircle cx='20' cy='22' r='9' fill='%23e8465b'/%3E%3Ccircle cx='44' cy='22' r='9' fill='%232f7fd6'/%3E%3Ccircle cx='20' cy='44' r='9' fill='%23f28c28'/%3E%3Ccircle cx='44' cy='44' r='9' fill='%232fa564'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+Chettan+2:wght@600;800&family=Nunito:wght@500;700;800&family=Noto+Sans+Malayalam:wght@400;600;700&display=swap">
+<style>
+/* Layout: one centered column. Header, letter picker, mode tabs, one play stage. Palette follows the rainbow letters on the Akshara Mela poster. */
+:root{
+  --bg:#fbf7ec; --paper:#ffffff; --ink:#1d2559; --muted:#5d6486; --line:#e6dfc9;
+  --k0:#e8465b; --k1:#f28c28; --k2:#e9b81c; --k3:#2fa564; --k4:#2f7fd6; --k5:#7a4bc4;
+  --ok:#2a9d5c; --bad:#d6453d; --pick:#2f7fd6;
+  --display:'Baloo Chettan 2','Noto Sans Malayalam',system-ui,sans-serif;
+  --body:'Nunito','Noto Sans Malayalam',system-ui,sans-serif;
+  --ml:'Noto Sans Malayalam','Baloo Chettan 2','Nirmala UI',system-ui,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#141936; --paper:#1f2650; --ink:#f4f0e2; --muted:#a9afd2; --line:#323b73;
+  --k0:#ff6b80; --k1:#ffa04a; --k2:#f4cb45; --k3:#4cc788; --k4:#5aa2f2; --k5:#a77df0;
+  --ok:#4cc788; --bad:#ff7a70; --pick:#5aa2f2; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141936; --paper:#1f2650; --ink:#f4f0e2; --muted:#a9afd2; --line:#323b73;
+  --k0:#ff6b80; --k1:#ffa04a; --k2:#f4cb45; --k3:#4cc788; --k4:#5aa2f2; --k5:#a77df0;
+  --ok:#4cc788; --bad:#ff7a70; --pick:#5aa2f2; color-scheme:dark}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.45;
+  padding-block:max(20px,env(safe-area-inset-top,0px)) calc(48px + env(safe-area-inset-bottom,0px));
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:900px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;-webkit-tap-highlight-color:transparent}
+button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,.fcard:focus-visible{outline:3px solid var(--k4);outline-offset:2px}
+svg{display:block}
+
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:10px 20px}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(2.2rem,8vw,3.4rem);line-height:1;margin:0;display:flex;flex-wrap:wrap}
+h1 span:nth-child(1){color:var(--k0)} h1 span:nth-child(2){color:var(--k1)} h1 span:nth-child(3){color:var(--k3)} h1 span:nth-child(4){color:var(--k4)} h1 span:nth-child(5){color:var(--k5)}
+.tag{margin:6px 0 0;color:var(--muted);font-weight:700}
+.tools{display:flex;flex-wrap:wrap;gap:8px}
+.tool{display:inline-flex;align-items:center;gap:7px;padding:8px 14px;border-radius:99px;border:2px solid var(--line);background:var(--paper);font-weight:800;font-size:.9rem}
+.tool svg{width:18px;height:18px}
+.tool[aria-pressed="true"]{border-color:var(--k3)}
+
+.note{display:flex;gap:12px;align-items:flex-start;justify-content:space-between;background:color-mix(in srgb,var(--k2) 22%,var(--paper));border:2px solid color-mix(in srgb,var(--k2) 60%,var(--paper));border-radius:16px;padding:10px 14px;font-size:.92rem}
+.note p{margin:0}
+.note button{font-weight:800;text-decoration:underline;white-space:nowrap}
+
+.picker{background:var(--paper);border:2px solid var(--line);border-radius:22px;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+.pk{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;text-align:left;font-weight:800;color:var(--muted);flex-wrap:wrap}
+.pk .cur{display:inline-flex;gap:6px;align-items:center;color:var(--ink)}
+.pk .cur b{font-family:var(--ml);font-size:1.3rem;padding:0 10px;border-radius:10px;background:color-mix(in srgb,var(--k4) 16%,var(--paper))}
+.pk .chg{color:var(--k4);text-decoration:underline}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{--c:var(--k0);min-width:50px;height:50px;padding:0 10px;border-radius:16px;border:2px solid color-mix(in srgb,var(--c) 45%,var(--paper));display:inline-grid;place-items:center;
+  background:color-mix(in srgb,var(--c) 12%,var(--paper));font-family:var(--ml);font-size:1.55rem;font-weight:700;color:var(--c);line-height:1}
+.chip[aria-pressed="true"],.chip.on{background:var(--c);color:#fff;border-color:var(--c);transform:translateY(-2px);box-shadow:0 4px 0 color-mix(in srgb,var(--c) 55%,#000)}
+.chip.all{font-family:var(--body);font-size:.95rem;color:var(--ink);--c:var(--k4)}
+.chip.all[aria-pressed="true"]{color:#fff}
+
+.tabs{display:flex;flex-wrap:wrap;gap:8px}
+.tab{padding:10px 16px;border-radius:99px;font-weight:800;border:2px solid var(--line);background:var(--paper)}
+.tab[aria-selected="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+
+.stage{background:var(--paper);border:2px solid var(--line);border-radius:26px;padding:clamp(14px,3vw,24px);min-height:380px;display:flex;flex-direction:column;gap:16px}
+.stage h2{margin:0;font-family:var(--display);font-size:1.5rem;font-weight:800;line-height:1.1}
+.lede{margin:4px 0 0;color:var(--muted)}
+.bar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 16px}
+.bar>div{min-width:0}
+.right{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.stat{font-weight:800;color:var(--muted);font-variant-numeric:tabular-nums}
+.btn{padding:10px 18px;border-radius:14px;background:var(--k4);color:#fff;font-weight:800;box-shadow:0 3px 0 color-mix(in srgb,var(--k4) 55%,#000)}
+.btn.alt{background:var(--paper);color:var(--ink);border:2px solid var(--line);box-shadow:none}
+.help{width:36px;height:36px;border-radius:50%;border:2px solid var(--line);font-weight:800;color:var(--k4);background:var(--paper)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:.85rem;font-weight:700;color:var(--muted)}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:4px;margin-right:6px;vertical-align:-1px}
+
+/* sound button: the same icon everywhere */
+.spk{position:absolute;top:6px;right:6px;width:36px;height:36px;border-radius:50%;background:var(--k4);color:#fff;display:grid;place-items:center;box-shadow:0 2px 0 color-mix(in srgb,var(--k4) 55%,#000)}
+.spk svg{width:20px;height:20px}
+.spk.inl{position:static;flex:none}
+.spk.lbl{position:static;width:auto;border-radius:99px;padding:8px 16px;display:inline-flex;gap:8px;font-weight:800}
+.spk:active{transform:translateY(1px)}
+
+/* match */
+.cols{position:relative;display:grid;grid-template-columns:1fr 1fr;column-gap:56px;row-gap:0}
+.col{display:flex;flex-direction:column;gap:10px;min-width:0}
+.cw{position:relative;display:block}
+.card{--c:var(--ok);position:relative;width:100%;border-radius:18px;border:3px solid var(--line);background:var(--bg);padding:10px;min-height:88px;
+  display:flex;align-items:center;justify-content:center;gap:10px;text-align:center;min-width:0}
+.card.pic{flex-direction:column;gap:2px}
+.card.wordc{padding-right:44px}
+.card .em{font-size:2.6rem;line-height:1.1}
+.card .en{font-size:.8rem;color:var(--muted);font-weight:800}
+.card .ml{font-family:var(--ml);font-size:1.45rem;font-weight:700;line-height:1.25;overflow-wrap:anywhere}
+.card .rom{display:block;font-size:.78rem;color:var(--muted);font-weight:700;font-family:var(--body)}
+.card.sel,.card[aria-pressed="true"]{border-color:var(--pick);background:color-mix(in srgb,var(--pick) 16%,var(--paper));transform:scale(1.03)}
+.card.done{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 20%,var(--paper))}
+.card.done::after{content:"\2713";position:absolute;left:-2px;top:-2px;width:22px;height:22px;border-radius:50%;background:var(--ok);color:#fff;font-size:.8rem;font-weight:800;display:grid;place-items:center;transform:translate(-30%,-30%)}
+.card.shake{animation:shake .4s;border-color:var(--bad)}
+@keyframes shake{20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+.lines{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:2}
+.lines line{stroke:var(--ok);stroke-width:4;stroke-linecap:round}
+.lines circle{fill:var(--ok)}
+
+/* which letter */
+.dots{display:flex;gap:6px;flex-wrap:wrap}
+.dot{width:12px;height:12px;border-radius:50%;background:var(--line)}
+.dot.on{background:var(--k4)} .dot.ok{background:var(--ok)} .dot.no{background:var(--bad)}
+.big{display:flex;flex-direction:column;align-items:center;gap:4px;padding:4px 0}
+.big .em{font-size:clamp(4rem,18vw,6rem);line-height:1.1}
+.big .en{font-weight:800;font-size:1.2rem}
+.reveal{display:flex;align-items:center;justify-content:center;gap:10px;font-family:var(--ml);font-size:1.9rem;font-weight:700;min-height:44px}
+.reveal mark{background:none;color:var(--ok)}
+.opts{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.opt{aspect-ratio:1/.8;border-radius:20px;border:3px solid var(--line);background:var(--bg);font-family:var(--ml);font-size:clamp(2.2rem,10vw,3.4rem);font-weight:700;color:var(--ink)}
+.opt.right{background:color-mix(in srgb,var(--ok) 25%,var(--paper));border-color:var(--ok)}
+.opt.wrong{background:color-mix(in srgb,var(--bad) 20%,var(--paper));border-color:var(--bad)}
+.center{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;min-height:46px}
+
+/* memory */
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.flip{width:100%;aspect-ratio:1/1.05;border-radius:16px;border:3px solid var(--line);background:var(--k4);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4px;min-width:0;font-family:var(--display);font-size:2rem;font-weight:800}
+.flip.face{background:var(--bg);color:var(--ink)}
+.flip.done{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 20%,var(--paper));color:var(--ink)}
+.flip .em{font-size:clamp(1.8rem,8vw,2.8rem);line-height:1.1}
+.flip .ml{font-family:var(--ml);font-size:clamp(.95rem,4.2vw,1.35rem);font-weight:700;overflow-wrap:anywhere;text-align:center;padding:0 4px}
+.flip .en{font-size:.7rem;color:var(--muted);font-family:var(--body);font-weight:800}
+.cw .spk{top:4px;right:4px;width:30px;height:30px}
+.cw .spk svg{width:16px;height:16px}
+
+/* flashcards */
+.fwrap{display:flex;flex-direction:column;align-items:center;gap:14px}
+.seg{display:inline-flex;border:2px solid var(--line);border-radius:99px;overflow:hidden}
+.seg button{padding:7px 14px;font-weight:800;font-size:.88rem}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.fcard{position:relative;width:min(100%,360px);min-height:300px;border-radius:28px;background:var(--bg);border:3px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:56px 18px 44px;
+  touch-action:pan-y;user-select:none;-webkit-user-select:none;cursor:grab;box-shadow:0 8px 0 color-mix(in srgb,var(--ink) 10%,var(--bg))}
+.fcard .spk{top:12px;right:12px;width:46px;height:46px}
+.fcard .spk svg{width:24px;height:24px}
+.fcard .em{font-size:5rem;line-height:1.1}
+.fcard .big-ml{font-family:var(--ml);font-size:2.6rem;font-weight:700;text-align:center;line-height:1.25;overflow-wrap:anywhere}
+.fcard .rom{font-weight:800;color:var(--muted)}
+.fcard .en{font-weight:800;font-size:1.15rem}
+.fcard .hint{position:absolute;bottom:12px;left:0;right:0;text-align:center;font-size:.8rem;font-weight:700;color:var(--muted)}
+.fcard .where{position:absolute;top:18px;left:18px;font-size:.78rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.fb{position:absolute;bottom:34px;padding:3px 12px;border-radius:10px;font-weight:800;border:3px solid;opacity:0;pointer-events:none;background:var(--paper)}
+.fb.yes{right:14px;color:var(--ok);transform:rotate(-8deg)} .fb.no{left:14px;color:var(--k1);transform:rotate(8deg)}
+.frow{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.frow .btn.no{background:var(--k1);box-shadow:0 3px 0 color-mix(in srgb,var(--k1) 55%,#000)}
+.frow .btn.yes{background:var(--ok);box-shadow:0 3px 0 color-mix(in srgb,var(--ok) 55%,#000)}
+
+/* word bank */
+.bank{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.word{--c:var(--k0);position:relative;border-radius:18px;border:3px solid color-mix(in srgb,var(--c) 40%,var(--paper));background:color-mix(in srgb,var(--c) 9%,var(--paper));padding:12px;display:flex;flex-direction:column;align-items:center;gap:2px;min-width:0;width:100%}
+.word .em{font-size:2.6rem;line-height:1.1}
+.word .ml{font-family:var(--ml);font-size:1.35rem;font-weight:700;overflow-wrap:anywhere;text-align:center}
+.word .rom,.word .en{font-size:.8rem;color:var(--muted);font-weight:700}
+.word .lt{position:absolute;left:8px;top:6px;font-family:var(--ml);font-weight:700;color:var(--c);font-size:.95rem}
+.word .ok{position:absolute;left:8px;bottom:6px;width:18px;height:18px;border-radius:50%;background:var(--ok);color:#fff;font-size:.65rem;font-weight:800;display:grid;place-items:center}
+.word .spk{width:30px;height:30px}
+.word .spk svg{width:16px;height:16px}
+details{border-top:2px dashed var(--line);padding-top:14px}
+summary{cursor:pointer;font-weight:800}
+.form{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-top:12px}
+.form label{display:flex;flex-direction:column;gap:4px;font-size:.85rem;font-weight:800;color:var(--muted);min-width:0}
+.form input,.form select{font:inherit;font-size:1rem;padding:9px 10px;border-radius:12px;border:2px solid var(--line);background:var(--bg);color:var(--ink);min-width:0}
+.mine{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.mine button{padding:6px 12px;border-radius:99px;border:2px solid var(--line);background:var(--bg);font-family:var(--ml)}
+
+/* lessons */
+.sub{display:flex;gap:8px;flex-wrap:wrap}
+.lgrid{display:grid;gap:8px;grid-template-columns:repeat(5,1fr)}
+.lgrid.v{grid-template-columns:repeat(5,1fr)}
+.lt-tile{--c:var(--k0);border-radius:16px;border:2px solid color-mix(in srgb,var(--c) 40%,var(--paper));background:color-mix(in srgb,var(--c) 10%,var(--paper));padding:8px 2px;display:flex;flex-direction:column;align-items:center;gap:0;min-width:0}
+.lt-tile .g{font-family:var(--ml);font-size:1.9rem;font-weight:700;color:var(--c);line-height:1.25}
+.lt-tile .r{font-size:.72rem;font-weight:800;color:var(--muted)}
+.lt-tile[aria-pressed="true"]{background:var(--c);border-color:var(--c);transform:translateY(-2px)}
+.lt-tile[aria-pressed="true"] .g,.lt-tile[aria-pressed="true"] .r{color:#fff}
+.ldetail{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center;border:2px solid var(--line);border-radius:22px;padding:14px 16px;background:var(--bg)}
+.ldetail .glyph{position:relative;font-family:var(--ml);font-size:5rem;font-weight:700;line-height:1.2;min-width:110px;text-align:center}
+.ldetail .glyph .spk{top:-4px;right:-10px}
+.ldetail .sounds{font-weight:800;color:var(--muted)}
+.ldetail .sounds b{color:var(--ink);font-size:1.3rem}
+.lwords{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.lw{position:relative;display:flex;align-items:center;gap:8px;padding:6px 8px 6px 12px;border-radius:14px;border:2px solid var(--line);background:var(--paper);font-family:var(--ml);font-weight:700}
+.lw .em{font-size:1.5rem}
+
+/* overlay (walkthrough, QR) */
+.ov{position:fixed;inset:0;background:rgba(10,14,40,.55);display:grid;place-items:center;padding:16px;z-index:50}
+.dlg{background:var(--paper);color:var(--ink);border-radius:26px;border:2px solid var(--line);max-width:440px;width:100%;padding:22px;display:flex;flex-direction:column;gap:12px;max-height:calc(100% - 8px);overflow:auto}
+.dlg h3{margin:0;font-family:var(--display);font-size:1.5rem;line-height:1.1}
+.dlg p{margin:0}
+.dlg .art{background:var(--bg);border-radius:18px;padding:16px;display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;min-height:120px}
+.dlg .art .card{width:auto;min-width:96px}
+.dlg .nav{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.dlg .skip{font-weight:800;color:var(--muted);text-decoration:underline}
+.mline{width:46px;height:4px;border-radius:4px;background:var(--ok)}
+.qr{background:#fff;padding:10px;border-radius:14px;width:min(100%,280px);margin:0 auto}
+.qr svg{width:100%;height:auto}
+.url{word-break:break-all;font-weight:700;text-align:center;font-size:.9rem}
+
+.win{text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px;padding:8px 0}
+.stars{font-size:2.4rem;letter-spacing:.1em;color:var(--k2)}
+.foot{color:var(--muted);font-size:.85rem;text-align:center;margin:0}
+@media (max-width:520px){
+  .cols{column-gap:40px}
+  .grid{grid-template-columns:repeat(3,1fr)}
+  .ldetail{grid-template-columns:1fr;justify-items:center;text-align:center}
+}
+@media (prefers-reduced-motion:reduce){.card.shake{animation:none}.chip[aria-pressed="true"],.chip.on,.card.sel,.card[aria-pressed="true"],.lt-tile[aria-pressed="true"]{transform:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1 aria-label="Akshara Kali"><span>അ</span><span>ക്ഷ</span><span>ര</span><span>ക്ക</span><span>ളി</span></h1>
+      <p class="tag">From letters to wonders. Learn, listen, match and play.</p>
+    </div>
+    <div class="tools">
+      <button class="tool" id="themeBtn" data-act="theme" aria-label="Switch between light and dark"></button>
+      <button class="tool" id="soundBtn" data-act="sound" aria-pressed="true"></button>
+      <button class="tool" data-act="qr" aria-label="Show a QR code to share this app">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v1M14 20h1M18 18h3v3h-3z"/></svg>Share
+      </button>
+    </div>
+  </header>
+
+  <div class="note" id="voiceNote" hidden>
+    <p id="voiceMsg"></p><button data-act="dismissnote">Hide</button>
+  </div>
+
+  <nav class="tabs" role="tablist" aria-label="Choose an activity" id="tabs"></nav>
+
+  <section class="picker" id="picker">
+    <button class="pk" id="pkBtn" data-act="togglepk" aria-expanded="false" aria-controls="chips"></button>
+    <div class="chips" id="chips" hidden aria-label="Pick up to two letters"></div>
+  </section>
+
+  <main class="stage" id="stage" aria-live="polite"></main>
+  <p class="foot" id="foot"></p>
+</div>
+
+<div class="ov" id="ov" hidden><div class="dlg" role="dialog" aria-modal="true" aria-labelledby="dt" id="dlg"></div></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js" onerror="void 0"></script>
+<script>
+/* =====================================================================
+   DATA: the only part you edit to grow the app.
+   Each word: [malayalam, romanised, english, picture, optional audio file]
+   Add a recording later by adding a 5th item, e.g. 'audio/aana.mp3'.
+   ===================================================================== */
+const LETTERS = [
+  {l:'അ', r:'a',   w:[['അമ്മ','amma','mother','👩'],['അരി','ari','rice','🍚'],['അണ്ണാൻ','annaan','squirrel','🐿️'],['അമ്പ്','ambu','arrow','🏹']]},
+  {l:'ആ', r:'aa',  w:[['ആന','aana','elephant','🐘'],['ആമ','aama','turtle','🐢'],['ആട്','aadu','goat','🐐'],['ആപ്പിൾ','aappil','apple','🍎']]},
+  {l:'ഉ', r:'u',   w:[['ഉറുമ്പ്','urumpu','ant','🐜'],['ഉള്ളി','ulli','onion','🧅'],['ഉരുളക്കിഴങ്ങ്','urulakkizhangu','potato','🥔'],['ഉടുപ്പ്','uduppu','frock','👗']]},
+  {l:'എ', r:'e',   w:[['എലി','eli','mouse','🐁'],['എരുമ','eruma','buffalo','🐃'],['എണ്ണ','enna','oil','🛢️']]},
+  {l:'ഒ', r:'o',   w:[['ഒട്ടകം','ottakam','camel','🐪'],['ഒച്ച്','ochu','snail','🐌'],['ഒന്ന്','onnu','one','1️⃣']]},
+  {l:'ഓ', r:'oa',  w:[['ഓറഞ്ച്','oranchu','orange','🍊'],['ഓണം','onam','Onam','🌼'],['ഓട്ടോ','otto','auto-rickshaw','🛺']]},
+  {l:'ക', r:'ka',  w:[['കാക്ക','kaakka','crow','🐦'],['കാർ','kaar','car','🚗'],['കുട','kuda','umbrella','☂️'],['കപ്പൽ','kappal','ship','🚢'],['കടുവ','kaduva','tiger','🐅'],['കണ്ണ്','kannu','eye','👁️'],['കോഴി','kozhi','hen','🐔'],['കൈ','kai','hand','✋']]},
+  {l:'ഗ', r:'ga',  w:[['ഗിറ്റാർ','gittaar','guitar','🎸'],['ഗോതമ്പ്','gothambu','wheat','🌾'],['ഗരുഡൻ','garudan','eagle','🦅']]},
+  {l:'ച', r:'cha', w:[['ചന്ദ്രൻ','chandran','moon','🌙'],['ചെണ്ട','chenda','drum','🥁'],['ചായ','chaaya','tea','🍵'],['ചെരുപ്പ്','cheruppu','slipper','🩴'],['ചെമ്മീൻ','chemmeen','prawn','🦐']]},
+  {l:'ജ', r:'ja',  w:[['ജനൽ','janal','window','🪟'],['ജലം','jalam','water','💧'],['ജിറാഫ്','jiraaf','giraffe','🦒'],['ജീപ്പ്','jeep','jeep','🚙']]},
+  {l:'ട', r:'ta',  w:[['ടിവി','TV','television','📺'],['ടെലിഫോൺ','telephone','telephone','☎️'],['ടോർച്ച്','torch','torch','🔦'],['ടാക്സി','taxi','taxi','🚕']]},
+  {l:'ത', r:'tha', w:[['തത്ത','thatha','parrot','🦜'],['തവള','thavala','frog','🐸'],['തേങ്ങ','thenga','coconut','🥥'],['താറാവ്','thaaraavu','duck','🦆'],['തണ്ണിമത്തൻ','thannimathan','watermelon','🍉'],['തീവണ്ടി','theevandi','train','🚂'],['തേൻ','then','honey','🍯']]},
+  {l:'ദ', r:'da',  w:[['ദീപം','deepam','lamp','🪔'],['ദോശ','dosha','dosa','🥞'],['ദിനോസർ','dinosar','dinosaur','🦖']]},
+  {l:'ന', r:'na',  w:[['നായ','naaya','dog','🐕'],['നക്ഷത്രം','nakshathram','star','⭐'],['നാരങ്ങ','naaranga','lemon','🍋'],['നൂൽ','nool','thread','🧵'],['നാണയം','naanayam','coin','🪙']]},
+  {l:'പ', r:'pa',  w:[['പൂച്ച','poocha','cat','🐱'],['പട്ടം','pattam','kite','🪁'],['പൂവ്','poovu','flower','🌸'],['പശു','pashu','cow','🐄'],['പാമ്പ്','paambu','snake','🐍'],['പുസ്തകം','pusthakam','book','📖'],['പേന','pena','pen','🖊️']]},
+  {l:'ഫ', r:'pha', w:[['ഫോൺ','phone','phone','📱'],['ഫുട്ബോൾ','football','football','⚽'],['ഫോട്ടോ','photo','photo','📷']]},
+  {l:'ബ', r:'ba',  w:[['ബസ്','bus','bus','🚌'],['ബലൂൺ','baloon','balloon','🎈'],['ബാഗ്','baag','bag','🎒'],['ബക്കറ്റ്','bakkattu','bucket','🪣']]},
+  {l:'ഭ', r:'bha', w:[['ഭൂമി','bhoomi','earth','🌍'],['ഭക്ഷണം','bhakshanam','food','🍽️'],['ഭൂപടം','bhoopadam','map','🗺️']]},
+  {l:'മ', r:'ma',  w:[['മരം','maram','tree','🌳'],['മല','mala','mountain','⛰️'],['മയിൽ','mayil','peacock','🦚'],['മഴ','mazha','rain','🌧️'],['മീൻ','meen','fish','🐟'],['മാങ്ങ','maanga','mango','🥭'],['മുയൽ','muyal','rabbit','🐇'],['മുട്ട','mutta','egg','🥚'],['മൂങ്ങ','moonga','owl','🦉']]},
+  {l:'ര', r:'ra',  w:[['രാത്രി','raathri','night','🌃'],['രണ്ട്','randu','two','2️⃣'],['രാജാവ്','raajaavu','king','🤴']]},
+  {l:'വ', r:'va',  w:[['വീട്','veedu','house','🏠'],['വിമാനം','vimaanam','aeroplane','✈️'],['വിളക്ക്','vilakku','oil lamp','🕯️'],['വാഴപ്പഴം','vaazhappazham','banana','🍌'],['വാൾ','vaal','sword','🗡️']]},
+  {l:'സ', r:'sa',  w:[['സൂര്യൻ','sooryan','sun','☀️'],['സൈക്കിൾ','cycle','bicycle','🚲'],['സിംഹം','simham','lion','🦁'],['സ്കൂൾ','school','school','🏫'],['സിനിമ','cinema','cinema','🎬']]},
+  {l:'ഹ', r:'ha',  w:[['ഹംസം','hamsam','swan','🦢'],['ഹെലികോപ്റ്റർ','helicopter','helicopter','🚁'],['ഹൃദയം','hrudayam','heart','❤️'],['ഹോട്ടൽ','hotel','hotel','🏨']]},
+  {l:'റ', r:'rra', w:[['റോഡ്','road','road','🛣️'],['റേഡിയോ','radio','radio','📻'],['റോസ','rosa','rose','🌹'],['റൊട്ടി','rotti','bread','🍞']]},
+  {l:'ഷ', r:'sha', w:[['ഷർട്ട്','shirt','shirt','👕'],['ഷൂ','shoe','shoe','👟'],['ഷവർ','shower','shower','🚿']]}
+];
+/* Lesson content: the full alphabet */
+const VOWELS = [['അ','a'],['ആ','aa'],['ഇ','i'],['ഈ','ee'],['ഉ','u'],['ഊ','oo'],['ഋ','ru'],['എ','e'],['ഏ','ae'],['ഐ','ai'],['ഒ','o'],['ഓ','oa'],['ഔ','au'],['അം','am'],['അഃ','aha']];
+const CONS = [
+  ['ക','ka'],['ഖ','kha'],['ഗ','ga'],['ഘ','gha'],['ങ','nga'],
+  ['ച','cha'],['ഛ','chha'],['ജ','ja'],['ഝ','jha'],['ഞ','nja'],
+  ['ട','ta'],['ഠ','tta'],['ഡ','da'],['ഢ','dda'],['ണ','na'],
+  ['ത','tha'],['ഥ','thha'],['ദ','da'],['ധ','dha'],['ന','na'],
+  ['പ','pa'],['ഫ','pha'],['ബ','ba'],['ഭ','bha'],['മ','ma'],
+  ['യ','ya'],['ര','ra'],['ല','la'],['വ','va'],['ശ','sha'],
+  ['ഷ','sha'],['സ','sa'],['ഹ','ha'],['ള','lla'],['ഴ','zha'],['റ','rra']];
+const CHILLU = [['ൻ','n'],['ൺ','n'],['ർ','r'],['ൽ','l'],['ൾ','l']];
+const LESSON_TABS = [['vowels','Vowels',VOWELS],['cons','Consonants',CONS],['chillu','Chillu',CHILLU]];
+
+/* =====================================================================
+   Helpers and saved state (all saved in this device's browser only)
+   ===================================================================== */
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const load = (k, d) => { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } };
+const save = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
+
+let custom = load('ak-custom', []); if (!Array.isArray(custom)) custom = [];
+let known = new Set(load('ak-known', []));
+let seen = load('ak-seen', {}); if (typeof seen !== 'object' || !seen) seen = {};
+const setKnown = (id, v) => { v ? known.add(id) : known.delete(id); save('ak-known', [...known]); };
+
+const COLORS = ['--k0','--k1','--k2','--k3','--k4','--k5'];
+const colorOf = l => 'var(' + COLORS[Math.max(0, LETTERS.findIndex(x => x.l === l)) % 6] + ')';
+const SPK_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+const spk = (attrs, cls = '', label = '') => `<button class="spk ${cls}" ${attrs} aria-label="Hear it">${SPK_SVG}${label}</button>`;
+const spkWord = (id, cls = '', label = '') => spk(`data-act="say" data-id="${esc(id)}"`, cls, label);
+
+let WORDS = [];
+function buildWords() {
+  WORDS = [];
+  LETTERS.forEach(L => L.w.forEach((w, i) => WORDS.push({id: L.l + i, l: L.l, ml: w[0], rom: w[1], en: w[2], pic: w[3], audio: w[4]})));
+  custom.forEach((c, i) => WORDS.push({id: 'c' + i, l: c.l, ml: c.ml, rom: '', en: c.en, pic: c.pic, custom: true}));
+}
+const S = {mode: 'match', sel: ['ക', 'മ'], sound: load('ak-sound', true), front: 'pic', lesson: {tab: 'vowels', cur: 'അ'}};
+const pool = () => { const p = WORDS.filter(w => S.sel.includes(w.l)); return p.length ? p : WORDS; };
+/* a set of n words for a game: no repeated pictures or words, topped up to at least 4 */
+function gamePool(n) {
+  const out = [], pics = new Set(), mls = new Set();
+  const add = w => { if (out.length < n && !pics.has(w.pic) && !mls.has(w.ml)) { out.push(w); pics.add(w.pic); mls.add(w.ml); } };
+  shuffle(pool()).forEach(add);
+  if (out.length < Math.min(4, n)) shuffle(WORDS).forEach(w => { if (out.length < 4) add(w); });
+  return out;
+}
+
+/* =====================================================================
+   Sound. Every speaker button tries these in order, so it keeps working
+   for words you add later:
+     1. a recorded file on the word (5th item of its data row), if any
+     2. /api/tts on this site (Azure Malayalam neural voice, see DEPLOY.md)
+     3. Google Translate voice (keyless backup, unofficial)
+     4. the device's own voice, if it has a Malayalam one
+   ===================================================================== */
+const AUDIO = {api: '/api/tts', google: true, timeoutMs: 7000};
+const hosted = /^https?:$/.test(location.protocol);
+const isMl = v => (v.lang || '').toLowerCase().replace('_', '-').startsWith('ml');
+const player = new Audio();           // one shared element: once a tap unlocks it, iPhones let it keep playing
+player.preload = 'auto';
+let playId = 0, noteDismissed = false;
+function audioSources(text, file) {
+  const q = encodeURIComponent(text), out = [];
+  if (file) out.push(file);
+  if (AUDIO.api && hosted) out.push(AUDIO.api + '?text=' + q);
+  if (AUDIO.google) out.push('https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=ml&q=' + q);
+  return out;
+}
+function playText(text, file) {
+  const id = ++playId, srcs = audioSources(text, file); let i = 0, timer = null;
+  try { if ('speechSynthesis' in window) speechSynthesis.cancel(); } catch (e) {}
+  const next = () => {
+    clearTimeout(timer);
+    if (id !== playId) return;
+    if (i >= srcs.length) { noteSoundFail(); speakText(text); return; }
+    player.src = srcs[i++];
+    timer = setTimeout(next, AUDIO.timeoutMs);
+    const pr = player.play();
+    if (pr && pr.catch) pr.catch(err => { if (err && err.name === 'NotAllowedError') clearTimeout(timer); });
+  };
+  player.onerror = next;
+  player.onplaying = () => { if (id === playId) { clearTimeout(timer); $('#voiceNote').hidden = true; } };
+  next();
+}
+function speakText(t) {            // last resort: the device's own voice
+  if (!('speechSynthesis' in window)) return;
+  try {
+    const u = new SpeechSynthesisUtterance(t); u.lang = 'ml-IN'; u.rate = .75;
+    const v = speechSynthesis.getVoices().find(isMl); if (v) u.voice = v;
+    speechSynthesis.speak(u);
+  } catch (e) {}
+}
+const sayWord = w => playText(w.ml, w.audio);
+const autoSay = w => { if (S.sound && w) sayWord(w); };
+function noteSoundFail() {
+  if (noteDismissed) return;
+  $('#voiceMsg').textContent = 'The sound could not load. Check your internet connection and try again.';
+  $('#voiceNote').hidden = false;
+}
+const warmed = new Set();           // ask the server for a game's words ahead of time so taps feel instant
+function warm(words) {
+  if (!hosted || !AUDIO.api || !window.fetch) return;
+  (words || []).slice(0, 12).forEach(w => {
+    if (warmed.has(w.ml)) return; warmed.add(w.ml);
+    try { fetch(AUDIO.api + '?text=' + encodeURIComponent(w.ml)).catch(() => {}); } catch (e) {}
+  });
+}
+
+/* =====================================================================
+   Walkthroughs
+   ===================================================================== */
+const ART = {
+  chips: '<span class="chip on" style="--c:var(--k0)">ക</span><span class="chip on" style="--c:var(--k4)">മ</span>',
+  pic: '<div class="card pic sel" style="width:110px"><span class="em">🚗</span><span class="en">car</span></div>',
+  pair: '<div class="card pic done" style="width:100px"><span class="em">🚗</span><span class="en">car</span></div><span class="mline"></span><div class="card done" style="width:120px"><span class="ml">കാർ<span class="rom">kaar</span></span></div>',
+  wrong: '<div class="card pic shake" style="width:100px;animation:none"><span class="em">🚗</span><span class="en">car</span></div><span style="font-size:1.6rem">✗</span><div class="card" style="width:120px"><span class="ml">മരം<span class="rom">maram</span></span></div>',
+  say: '<button class="spk lbl" tabindex="-1">' + SPK_SVG + 'Hear it</button>',
+  fc: '<div class="fcard" style="min-height:170px;width:190px;padding:46px 10px 10px;cursor:default"><span class="spk" style="top:8px;right:8px;width:36px;height:36px">' + SPK_SVG + '</span><span class="em" style="font-size:3rem">🐘</span></div>',
+  swipe: '<span style="font-size:1.3rem;font-weight:800;color:var(--k1)">&larr; still learning</span><span style="font-size:1.3rem;font-weight:800;color:var(--ok)">I know it &rarr;</span>'
+};
+const TOURS = {
+  learn: [
+    {t:'Learn the letters', d:'Pick Vowels, Consonants or Chillu. Every letter of Malayalam is here.', art:'<span class="chip on" style="--c:var(--k0)">അ</span><span class="chip on" style="--c:var(--k1)">ക</span><span class="chip on" style="--c:var(--k3)">ൻ</span>'},
+    {t:'Tap a letter', d:'The big card shows how it sounds in English letters. Press the speaker to hear it.', art:ART.say},
+    {t:'See it in words', d:'Letters that have words show them below, each with its own speaker. Then press Practise to play with that letter.', art:'<div class="lw"><span class="em">🐘</span>ആന ' + SPK_SVG.replace('<svg','<svg width="18" height="18"') + '</div>'}
+  ],
+  flash: [
+    {t:'Flashcards', d:'A card shows a picture or a word. Press the speaker at the top of the card to hear it.', art:ART.fc},
+    {t:'Flip the card', d:'Tap the card to see the other side. Use the switch above the card to start with the picture or the Malayalam word.', art:'<span style="font-size:2.4rem">🐘</span><span style="font-size:1.6rem">&harr;</span><span style="font-family:var(--ml);font-size:2.2rem;font-weight:700">ആന</span>'},
+    {t:'Swipe it away', d:'Swipe right if you know the word. Swipe left if you do not. You can also use the two buttons or the arrow keys. Missed cards come back later.', art:ART.swipe}
+  ],
+  match: [
+    {t:'Choose your letters', d:'Tap up to two letters at the top. The game uses words that start with them.', art:ART.chips},
+    {t:'Tap a picture', d:'The picture turns blue so you know it is chosen.', art:ART.pic},
+    {t:'Tap its Malayalam word', d:'Right answer: both cards turn green with a tick and a line joins them. Green always means matched.', art:ART.pair},
+    {t:'Wrong match?', d:'The cards shake and nothing is lost. Try again. Use the speaker on any word to hear it.', art:ART.wrong}
+  ],
+  pick: [
+    {t:'Look at the picture', d:'Think of the Malayalam word for it. Not sure? Press Hear it.', art:'<span style="font-size:3.6rem">🐘</span>' + ART.say},
+    {t:'Choose the first letter', d:'Tap the letter you think the word starts with.', art:'<span class="chip" style="--c:var(--k0);min-width:64px;height:64px;font-size:2rem">അ</span><span class="chip on" style="--c:var(--k3);min-width:64px;height:64px;font-size:2rem">ആ</span><span class="chip" style="--c:var(--k4);min-width:64px;height:64px;font-size:2rem">ഇ</span>'},
+    {t:'See the word', d:'The word appears with its first letter in green. Press the speaker to hear it, then go to the next picture.', art:'<span style="font-family:var(--ml);font-size:2rem;font-weight:700"><span style="color:var(--ok)">ആ</span>ന</span>'}
+  ],
+  memory: [
+    {t:'Flip two cards', d:'Tap a card to turn it over, then tap a second one.', art:'<div class="flip" style="width:80px;height:84px">?</div><div class="flip face" style="width:80px;height:84px"><span class="em">🐘</span></div>'},
+    {t:'Make a pair', d:'A picture and its Malayalam word are a pair. Pairs stay face up in green.', art:'<div class="flip done" style="width:84px;height:88px"><span class="em">🐘</span></div><span class="mline"></span><div class="flip done" style="width:84px;height:88px"><span class="ml">ആന</span></div>'},
+    {t:'Find them all', d:'Face-up words have a small speaker. Fewer flips earns more stars.', art:'<span class="stars">★★★</span>'}
+  ],
+  bank: [
+    {t:'Your word bank', d:'Every word with its picture and English meaning. Tap any card to hear it.', art:'<div class="word" style="--c:var(--k3);width:140px"><span class="em">🐘</span><span class="ml">ആന</span><span class="rom">aana</span></div>'},
+    {t:'Filter by letter', d:'Choose up to two letters at the top to see only their words. Choose All letters to see everything.', art:ART.chips},
+    {t:'Add your own words', d:'Open Add your own word at the bottom. Your words join every game. A green tick marks words you know from the flashcards.', art:'<span style="font-size:2rem">➕</span>'}
+  ]
+};
+let tourState = null;
+function tour(mode, i = 0) {
+  const steps = TOURS[mode]; if (!steps) return;
+  tourState = {mode, i};
+  seen[mode] = 1; save('ak-seen', seen);
+  const s = steps[i], last = i === steps.length - 1;
+  $('#dlg').innerHTML = `
+    <div class="stat">How to play &middot; step ${i + 1} of ${steps.length}</div>
+    <div class="art">${s.art}</div>
+    <h3 id="dt">${esc(s.t)}</h3><p>${esc(s.d)}</p>
+    <div class="nav">
+      ${last ? '<span></span>' : '<button class="skip" data-act="closeov">Skip</button>'}
+      <div style="display:flex;gap:8px">
+        ${i > 0 ? '<button class="btn alt" data-act="tourback">Back</button>' : ''}
+        <button class="btn" id="tourNext" data-act="${last ? 'closeov' : 'tournext'}">${last ? 'Let’s play' : 'Next'}</button>
+      </div>
+    </div>`;
+  $('#ov').hidden = false;
+  $('#tourNext').focus();
+}
+function closeOv() { $('#ov').hidden = true; tourState = null; }
+function showQR() {
+  const url = location.href.split('#')[0];
+  let body;
+  if (!/^https?:$/.test(location.protocol)) {
+    body = '<p>This copy is opened straight from a file, so it has no web address yet. Once the app is hosted online, this button shows a QR code that opens it on any phone.</p>';
+  } else if (typeof qrcode === 'function') {
+    const q = qrcode(0, 'M'); q.addData(url); q.make();
+    const n = q.getModuleCount(), m = 4; let p = '';
+    for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (q.isDark(r, c)) p += `M${c + m} ${r + m}h1v1h-1z`;
+    body = `<div class="qr"><svg viewBox="0 0 ${n + 2 * m} ${n + 2 * m}" shape-rendering="crispEdges" role="img" aria-label="QR code"><rect width="100%" height="100%" fill="#fff"/><path d="${p}" fill="#000"/></svg></div><p class="url">${esc(url)}</p>`;
+  } else body = `<p>The QR code needs an internet connection to build. The address is:</p><p class="url">${esc(url)}</p>`;
+  $('#dlg').innerHTML = `<h3 id="dt">Play on your phone</h3>${body}<div class="nav"><span></span><button class="btn" id="tourNext" data-act="closeov">Done</button></div>`;
+  $('#ov').hidden = false; $('#tourNext').focus();
+}
+
+/* =====================================================================
+   Shared chrome
+   ===================================================================== */
+let pkOpen = false;
+const MODES = [['learn','Learn letters'],['flash','Flashcards'],['match','Match'],['pick','Which letter?'],['memory','Memory'],['bank','Word bank']];
+const SUN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
+const MOON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></svg>';
+function curTheme() { return document.documentElement.getAttribute('data-theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); }
+function drawTheme() { const d = curTheme() === 'dark'; $('#themeBtn').innerHTML = (d ? SUN : MOON) + (d ? 'Light mode' : 'Dark mode'); }
+function drawChrome() {
+  $('#chips').innerHTML = LETTERS.map(L =>
+    `<button class="chip" style="--c:${colorOf(L.l)}" data-act="letter" data-l="${L.l}" aria-pressed="${S.sel.includes(L.l)}" title="${L.r}">${L.l}</button>`).join('') +
+    `<button class="chip all" data-act="all" aria-pressed="${S.sel.length === 0}">All letters</button>`;
+  $('#tabs').innerHTML = MODES.map(m => `<button class="tab" role="tab" data-act="mode" data-m="${m[0]}" aria-selected="${S.mode === m[0]}">${m[1]}</button>`).join('');
+  $('#picker').hidden = S.mode === 'learn';
+  $('#pkBtn').innerHTML = `<span class="cur">My letters: ${S.sel.length ? S.sel.map(l => '<b>' + l + '</b>').join('') : '<b style="font-family:var(--body);font-size:1rem">All</b>'}</span><span class="chg">${pkOpen ? 'Done' : 'Change'}</span>`;
+  $('#pkBtn').setAttribute('aria-expanded', pkOpen);
+  $('#chips').hidden = !pkOpen;
+  $('#soundBtn').setAttribute('aria-pressed', S.sound);
+  $('#soundBtn').innerHTML = SPK_SVG + (S.sound ? 'Auto sound on' : 'Auto sound off');
+  $('#foot').textContent = `${WORDS.length} words in the bank. You know ${[...known].filter(id => WORDS.some(w => w.id === id)).length} so far.`;
+  drawTheme();
+}
+const helpBtn = m => `<button class="help" data-act="tour" data-m="${m}" aria-label="How to play">?</button>`;
+const stars = n => '★'.repeat(n) + '☆'.repeat(3 - n);
+
+/* =====================================================================
+   Learn letters
+   ===================================================================== */
+function drawLearn() {
+  const L = S.lesson, tab = LESSON_TABS.find(t => t[0] === L.tab);
+  const list = tab[2];
+  if (!list.some(x => x[0] === L.cur)) L.cur = list[0][0];
+  const cur = list.find(x => x[0] === L.cur);
+  const ws = WORDS.filter(w => w.l === L.cur && !w.custom).slice(0, 4);
+  const colorFor = i => 'var(' + COLORS[(L.tab === 'cons' ? Math.floor(i / 5) : i) % 6] + ')';
+  $('#stage').innerHTML = `
+    <div class="bar"><div><h2>Learn the letters</h2><p class="lede">Tap a letter to see how it sounds and which words use it.</p></div><div class="right">${helpBtn('learn')}</div></div>
+    <div class="sub" role="tablist">${LESSON_TABS.map(t => `<button class="tab" role="tab" data-act="ltab" data-t="${t[0]}" aria-selected="${L.tab === t[0]}">${t[1]}</button>`).join('')}</div>
+    <div class="ldetail">
+      <div class="glyph">${esc(cur[0])}${spk(`data-act="say" data-t="${esc(cur[0])}"`)}</div>
+      <div>
+        <div class="sounds">Sounds like <b>${esc(cur[1])}</b></div>
+        ${ws.length ? `<div class="lwords">${ws.map(w => `<span class="lw"><span class="em">${w.pic}</span>${esc(w.ml)}${spkWord(w.id, 'inl')}</span>`).join('')}</div>
+        <p style="margin-top:12px"><button class="btn" data-act="practise" data-l="${esc(cur[0])}">Practise ${esc(cur[0])}</button></p>`
+        : `<p class="lede">${L.tab === 'chillu' ? 'Chillu letters end a syllable and have no vowel of their own.' : 'This letter is mostly used inside longer words.'}</p>`}
+      </div>
+    </div>
+    <div class="lgrid">${list.map((x, i) => `<button class="lt-tile" style="--c:${colorFor(i)}" data-act="lpick" data-l="${esc(x[0])}" aria-pressed="${x[0] === L.cur}"><span class="g">${esc(x[0])}</span><span class="r">${esc(x[1])}</span></button>`).join('')}</div>`;
+}
+
+/* =====================================================================
+   Flashcards (swipe right = know it, swipe left = still learning)
+   ===================================================================== */
+let F;
+function startFlash(onlyIds) {
+  let q;
+  if (onlyIds) q = shuffle(WORDS.filter(w => onlyIds.includes(w.id)));
+  else q = [...shuffle(pool().filter(w => !known.has(w.id))), ...shuffle(pool().filter(w => known.has(w.id)))].slice(0, 10);
+  warm(q);
+  F = {q, i: 0, flip: false, got: 0, first: 0, total: q.length, tried: new Set(), missed: new Set(), out: false};
+  drawFlash();
+}
+function drawFlash() {
+  const head = `<div class="bar"><div><h2>Flashcards</h2><p class="lede">Swipe right if you know it. Swipe left if you do not.</p></div><div class="right"><span class="stat">${F.got} of ${F.total} learned</span>${helpBtn('flash')}</div></div>`;
+  if (F.i >= F.q.length) {
+    const miss = [...F.missed];
+    $('#stage').innerHTML = head + `<div class="win"><div class="stars">${stars(F.first >= F.total * .8 ? 3 : F.first >= F.total * .5 ? 2 : 1)}</div>
+      <h2>Set finished</h2><p class="lede">${F.first} of ${F.total} words were known on the first look.${miss.length ? ' The others will show up again in your next set.' : ''}</p>
+      <div class="center"><button class="btn" data-act="again">New set</button>${miss.length ? '<button class="btn alt" data-act="review">Practise the missed words</button>' : ''}</div></div>`;
+    return;
+  }
+  const w = F.q[F.i];
+  const pic = `<span class="em">${w.pic}</span><span class="en">${esc(w.en)}</span>`;
+  const word = `<span class="big-ml">${esc(w.ml)}</span>${w.rom ? `<span class="rom">${esc(w.rom)}</span>` : ''}`;
+  const front = S.front === 'pic' ? pic : word;
+  const back = S.front === 'pic' ? word + `<span class="en">${esc(w.en)}</span>` : pic;
+  $('#stage').innerHTML = head + `
+    <div class="fwrap">
+      <div class="seg" role="group" aria-label="Start with"><button data-act="front" data-f="pic" aria-pressed="${S.front === 'pic'}">Start with picture</button><button data-act="front" data-f="word" aria-pressed="${S.front === 'word'}">Start with word</button></div>
+      <div class="fcard" id="fcard" tabindex="0" aria-label="Flashcard. Press space to flip, right arrow if you know it, left arrow if not.">
+        ${spkWord(w.id)}
+        <span class="where">${F.flip ? 'Answer' : 'Question'}</span>
+        ${F.flip ? back : front}
+        <span class="fb no">Still learning</span><span class="fb yes">Know it</span>
+        <span class="hint">${F.flip ? 'Swipe the card or use the buttons' : 'Tap the card to flip'}</span>
+      </div>
+      <div class="frow"><button class="btn no" data-act="fno">Still learning</button><button class="btn alt" data-act="fflip">Flip</button><button class="btn yes" data-act="fyes">I know it</button></div>
+    </div>`;
+  bindSwipe($('#fcard'));
+}
+function bindSwipe(el) {
+  let x0 = null, dx = 0, id = null;
+  const yes = el.querySelector('.fb.yes'), no = el.querySelector('.fb.no');
+  el.addEventListener('pointerdown', e => {
+    if (F.out || e.target.closest('.spk')) return;
+    x0 = e.clientX; dx = 0; id = e.pointerId;
+    try { el.setPointerCapture(id); } catch (x) {}
+    el.style.transition = 'none';
+  });
+  el.addEventListener('pointermove', e => {
+    if (x0 === null) return;
+    dx = e.clientX - x0;
+    el.style.transform = `translateX(${dx}px) rotate(${dx / 18}deg)`;
+    const a = Math.min(1, Math.abs(dx) / 90);
+    yes.style.opacity = dx > 0 ? a : 0; no.style.opacity = dx < 0 ? a : 0;
+  });
+  const end = () => {
+    if (x0 === null) return;
+    const moved = dx; x0 = null;
+    if (Math.abs(moved) > 90) { flashAnswer(moved > 0); return; }
+    el.style.transition = 'transform .2s'; el.style.transform = ''; yes.style.opacity = 0; no.style.opacity = 0;
+    if (Math.abs(moved) < 6) { F.flip = !F.flip; drawFlash(); }
+  };
+  el.addEventListener('pointerup', end);
+  el.addEventListener('pointercancel', () => { if (x0 !== null) { x0 = null; el.style.transform = ''; } });
+}
+function flashAnswer(knew) {
+  if (!F || F.out || F.i >= F.q.length) return;
+  F.out = true;
+  const el = $('#fcard');
+  if (el) { el.style.transition = 'transform .28s ease-in, opacity .28s'; el.style.transform = `translateX(${knew ? 130 : -130}%) rotate(${knew ? 16 : -16}deg)`; el.style.opacity = '0'; }
+  setTimeout(() => {
+    const w = F.q[F.i], firstLook = !F.tried.has(w.id); F.tried.add(w.id);
+    if (knew) { F.got++; if (firstLook) F.first++; setKnown(w.id, true); F.missed.delete(w.id); }
+    else { F.missed.add(w.id); setKnown(w.id, false); F.q.splice(Math.min(F.i + 4, F.q.length), 0, w); }
+    F.i++; F.flip = false; F.out = false; drawFlash(); drawChrome();
+  }, el ? 240 : 0);
+}
+
+/* =====================================================================
+   Match (pictures on the left, words on the right, green line per pair)
+   ===================================================================== */
+let M;
+function startMatch() {
+  const p = gamePool(6); warm(p);
+  M = {p, left: shuffle(p), right: shuffle(p), done: new Set(), pick: null, miss: 0, shake: null};
+  drawMatch();
+}
+function drawMatch() {
+  const fin = M.done.size === M.p.length;
+  const card = (w, side) => {
+    const done = M.done.has(w.id), on = M.pick && M.pick.id === w.id && M.pick.side === side;
+    const shake = M.shake && M.shake.includes(w.id + side);
+    const inner = side === 'L' ? `<span class="em">${w.pic}</span><span class="en">${esc(w.en)}</span>` : `<span class="ml">${esc(w.ml)}${w.rom ? `<span class="rom">${esc(w.rom)}</span>` : ''}</span>`;
+    return `<div class="cw"><button class="card ${side === 'L' ? 'pic' : 'wordc'} ${done ? 'done' : ''} ${shake ? 'shake' : ''}" data-act="mpick" data-id="${esc(w.id)}" data-side="${side}" aria-pressed="${!!on}" ${done ? 'disabled' : ''}>${inner}</button>${side === 'R' ? spkWord(w.id) : ''}</div>`;
+  };
+  $('#stage').innerHTML = `
+    <div class="bar"><div><h2>Match the picture to its word</h2><p class="lede">Tap a picture, then tap the Malayalam word that goes with it.</p></div>
+      <div class="right"><span class="stat">${M.done.size} of ${M.p.length} matched</span>${helpBtn('match')}</div></div>
+    <div class="legend"><span><i style="background:var(--pick)"></i>Chosen</span><span><i style="background:var(--ok)"></i>Matched (green, with a line)</span><span><i style="background:var(--bad)"></i>Try again</span></div>
+    ${fin ? `<div class="win"><div class="stars">${stars(M.miss === 0 ? 3 : M.miss <= 3 ? 2 : 1)}</div><h2>All matched!</h2><p class="lede">${M.miss === 0 ? 'Not a single wrong tap.' : M.miss + ' wrong tap' + (M.miss > 1 ? 's' : '') + ' along the way.'}</p>
+      <div class="center"><button class="btn" data-act="again">New words</button></div></div>` : ''}
+    <div class="cols" id="cols"><svg class="lines" aria-hidden="true"></svg><div class="col">${M.left.map(w => card(w, 'L')).join('')}</div><div class="col">${M.right.map(w => card(w, 'R')).join('')}</div></div>`;
+  drawLines();
+}
+function drawLines() {
+  const box = $('#cols'); if (!box || !M) return;
+  const svg = box.querySelector('.lines'), b = box.getBoundingClientRect(); let h = '';
+  M.done.forEach(id => {
+    const L = box.querySelector(`.card[data-id="${CSS.escape(id)}"][data-side="L"]`), R = box.querySelector(`.card[data-id="${CSS.escape(id)}"][data-side="R"]`);
+    if (!L || !R) return;
+    const l = L.getBoundingClientRect(), r = R.getBoundingClientRect();
+    const x1 = l.right - b.left, y1 = l.top + l.height / 2 - b.top, x2 = r.left - b.left, y2 = r.top + r.height / 2 - b.top;
+    h += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/><circle cx="${x1}" cy="${y1}" r="5"/><circle cx="${x2}" cy="${y2}" r="5"/>`;
+  });
+  svg.innerHTML = h;
+}
+function matchTap(id, side) {
+  const w = M.p.find(x => x.id === id);
+  if (!M.pick || M.pick.side === side) { M.pick = {id, side}; drawMatch(); return; }
+  if (M.pick.id === id) { M.done.add(id); M.pick = null; autoSay(w); drawMatch(); return; }
+  M.miss++; M.shake = [M.pick.id + M.pick.side, id + side]; M.pick = null; drawMatch();
+  setTimeout(() => { M.shake = null; if (S.mode === 'match') drawMatch(); }, 420);
+}
+
+/* =====================================================================
+   Which letter?
+   ===================================================================== */
+let P;
+function startPick() {
+  P = {q: gamePool(8), i: 0, score: 0, ans: null, res: []}; warm(P.q);
+  pickOpts(); drawPick();
+}
+function pickOpts() {
+  const w = P.q[P.i]; if (!w) return;
+  P.opts = shuffle([w.l, ...shuffle(LETTERS.map(x => x.l).filter(x => x !== w.l)).slice(0, 2)]);
+}
+function drawPick() {
+  const dots = `<div class="dots" aria-hidden="true">${P.q.map((_, i) => `<span class="dot ${P.res[i] === 1 ? 'ok' : P.res[i] === 0 ? 'no' : i === P.i ? 'on' : ''}"></span>`).join('')}</div>`;
+  const head = h => `<div class="bar"><div><h2>Which letter does it start with?</h2><p class="lede">Look at the picture and think of the Malayalam word.</p></div><div class="right">${h}${helpBtn('pick')}</div></div>`;
+  if (P.i >= P.q.length) {
+    $('#stage').innerHTML = head('') + `<div class="win"><div class="stars">${stars(P.score === P.q.length ? 3 : P.score >= P.q.length / 2 ? 2 : 1)}</div><h2>${P.score} of ${P.q.length} on the first try</h2>
+      <p class="lede">Every word you saw is in the Word bank to read again.</p><div class="center"><button class="btn" data-act="again">Play again</button></div></div>`;
+    return;
+  }
+  const w = P.q[P.i];
+  const reveal = P.ans ? `<span><mark>${esc(w.l)}</mark>${esc(w.ml.slice(w.l.length))}</span>${spkWord(w.id, 'inl')}` : spkWord(w.id, 'lbl', 'Hear it');
+  $('#stage').innerHTML = head(dots) + `
+    <div class="big"><span class="em">${w.pic}</span><span class="en">${esc(w.en)}</span></div>
+    <div class="reveal">${reveal}</div>
+    <div class="opts">${P.opts.map(o => {
+      const cls = P.ans ? (o === w.l ? 'right' : o === P.ans ? 'wrong' : '') : '';
+      return `<button class="opt ${cls}" data-act="popt" data-l="${o}" ${P.ans && o !== P.ans && o !== w.l ? 'disabled' : ''}>${o}</button>`; }).join('')}</div>
+    <div class="center">${P.ans ? `<button class="btn" data-act="pnext">${P.i + 1 < P.q.length ? 'Next' : 'See result'}</button>` : ''}</div>`;
+}
+function pickTap(l) {
+  if (P.ans) return;
+  const w = P.q[P.i]; P.ans = l; P.res[P.i] = l === w.l ? 1 : 0;
+  if (l === w.l) P.score++;
+  autoSay(w); drawPick();
+}
+
+/* =====================================================================
+   Memory
+   ===================================================================== */
+let Y;
+function startMemory() {
+  const p = gamePool(6); warm(p);
+  Y = {cards: shuffle([...p.map(w => ({k: w.id, t: 'pic', w})), ...p.map(w => ({k: w.id, t: 'word', w}))]), open: [], won: new Set(), moves: 0, lock: false, n: p.length};
+  drawMemory();
+}
+function drawMemory() {
+  const fin = Y.won.size === Y.n;
+  $('#stage').innerHTML = `
+    <div class="bar"><div><h2>Find the pairs</h2><p class="lede">Flip two cards. A picture and its Malayalam word make a pair.</p></div><div class="right"><span class="stat">${Y.moves} flip${Y.moves === 1 ? '' : 's'} of two</span>${helpBtn('memory')}</div></div>
+    ${fin ? `<div class="win"><div class="stars">${stars(Y.moves <= Y.n + 2 ? 3 : Y.moves <= Y.n * 2 ? 2 : 1)}</div><h2>Every pair found!</h2><div class="center"><button class="btn" data-act="again">New words</button></div></div>` : ''}
+    <div class="grid">${Y.cards.map((c, i) => {
+      const face = Y.open.includes(i) || Y.won.has(c.k);
+      const body = !face ? '?' : c.t === 'pic' ? `<span class="em">${c.w.pic}</span><span class="en">${esc(c.w.en)}</span>` : `<span class="ml">${esc(c.w.ml)}</span>`;
+      return `<div class="cw"><button class="flip ${face ? 'face' : ''} ${Y.won.has(c.k) ? 'done' : ''}" data-act="flip" data-i="${i}" aria-label="${face ? '' : 'Hidden card'}">${body}</button>${face && c.t === 'word' ? spkWord(c.w.id) : ''}</div>`; }).join('')}</div>`;
+}
+function flip(i) {
+  const c = Y.cards[i];
+  if (Y.lock || Y.open.includes(i) || Y.won.has(c.k)) return;
+  Y.open.push(i);
+  if (Y.open.length === 2) {
+    Y.moves++;
+    const [a, b] = Y.open.map(x => Y.cards[x]);
+    if (a.k === b.k && a.t !== b.t) { Y.won.add(a.k); Y.open = []; autoSay(a.w); }
+    else { Y.lock = true; drawMemory(); setTimeout(() => { Y.open = []; Y.lock = false; if (S.mode === 'memory') drawMemory(); }, 1100); return; }
+  }
+  drawMemory();
+}
+
+/* =====================================================================
+   Word bank
+   ===================================================================== */
+function drawBank() {
+  const list = pool();
+  $('#stage').innerHTML = `
+    <div class="bar"><div><h2>Word bank</h2><p class="lede">Tap any card to hear the word. ${S.sel.length ? 'Showing your letters.' : 'Showing every letter.'}</p></div><div class="right"><span class="stat">${list.length} words</span>${helpBtn('bank')}</div></div>
+    <div class="bank">${list.map(w => `<button class="word" style="--c:${colorOf(w.l)}" data-act="say" data-id="${esc(w.id)}"><span class="lt">${esc(w.l)}</span>${known.has(w.id) ? '<span class="ok" title="You know this word">✓</span>' : ''}<span class="em">${w.pic}</span><span class="ml">${esc(w.ml)}</span>${w.rom ? `<span class="rom">${esc(w.rom)}</span>` : ''}<span class="en">${esc(w.en)}</span><span class="spk inl" aria-hidden="true">${SPK_SVG}</span></button>`).join('')}</div>
+    <details>
+      <summary>Add your own word</summary>
+      <form class="form" id="addForm">
+        <label for="fl">Letter<select id="fl">${LETTERS.map(L => `<option value="${L.l}">${L.l}  (${L.r})</option>`).join('')}</select></label>
+        <label for="fm">Malayalam word<input id="fm" type="text" required placeholder="e.g. കോഴി"></label>
+        <label for="fe">English<input id="fe" type="text" required placeholder="e.g. hen"></label>
+        <label for="fp">Picture (an emoji)<input id="fp" type="text" required maxlength="8" placeholder="e.g. 🐔"></label>
+        <div style="display:flex;align-items:flex-end"><button class="btn" type="submit">Add word</button></div>
+      </form>
+      ${custom.length ? `<div class="mine" aria-label="Your added words">${custom.map((c, i) => `<button data-act="rm" data-i="${i}" title="Remove">${esc(c.pic)} ${esc(c.ml)} &times;</button>`).join('')}</div>` : ''}
+      <p class="lede">Added words are saved on this device only and join all the games.</p>
+    </details>`;
+}
+
+/* =====================================================================
+   Wiring
+   ===================================================================== */
+function render() {
+  drawChrome();
+  ({learn: drawLearn, flash: startFlash, match: startMatch, pick: startPick, memory: startMemory, bank: drawBank})[S.mode]();
+  if (!seen[S.mode] && $('#ov').hidden) setTimeout(() => tour(S.mode), 150);
+}
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-act]'); if (!t) return;
+  const a = t.dataset.act;
+  switch (a) {
+    case 'letter': { const l = t.dataset.l; S.sel = S.sel.includes(l) ? S.sel.filter(x => x !== l) : [...S.sel, l].slice(-2); render(); break; }
+    case 'all': S.sel = []; render(); break;
+    case 'togglepk': pkOpen = !pkOpen; drawChrome(); break;
+    case 'mode': S.mode = t.dataset.m; render(); break;
+    case 'sound': S.sound = !S.sound; save('ak-sound', S.sound); drawChrome(); break;
+    case 'theme': { const n = curTheme() === 'dark' ? 'light' : 'dark'; document.documentElement.setAttribute('data-theme', n); save('ak-theme', n); drawTheme(); break; }
+    case 'qr': showQR(); break;
+    case 'dismissnote': noteDismissed = true; $('#voiceNote').hidden = true; break;
+    case 'tour': tour(t.dataset.m); break;
+    case 'tournext': tour(tourState.mode, tourState.i + 1); break;
+    case 'tourback': tour(tourState.mode, tourState.i - 1); break;
+    case 'closeov': closeOv(); break;
+    case 'again': render(); break;
+    case 'say': { if (t.dataset.t) playText(t.dataset.t); else { const w = WORDS.find(x => x.id === t.dataset.id); if (w) sayWord(w); } break; }
+    case 'ltab': S.lesson.tab = t.dataset.t; drawLearn(); break;
+    case 'lpick': S.lesson.cur = t.dataset.l; drawLearn(); playText(t.dataset.l); break;
+    case 'practise': S.sel = [t.dataset.l]; S.mode = 'match'; render(); break;
+    case 'front': S.front = t.dataset.f; drawFlash(); break;
+    case 'fflip': F.flip = !F.flip; drawFlash(); break;
+    case 'fyes': flashAnswer(true); break;
+    case 'fno': flashAnswer(false); break;
+    case 'review': startFlash([...F.missed]); break;
+    case 'mpick': matchTap(t.dataset.id, t.dataset.side); break;
+    case 'popt': pickTap(t.dataset.l); break;
+    case 'pnext': P.i++; P.ans = null; pickOpts(); drawPick(); break;
+    case 'flip': flip(+t.dataset.i); break;
+    case 'rm': custom.splice(+t.dataset.i, 1); save('ak-custom', custom); buildWords(); drawBank(); drawChrome(); $('#stage details').open = true; break;
+  }
+});
+document.addEventListener('submit', e => {
+  if (e.target.id !== 'addForm') return;
+  e.preventDefault();
+  const c = {l: $('#fl').value, ml: $('#fm').value.trim(), en: $('#fe').value.trim(), pic: $('#fp').value.trim()};
+  if (!c.ml || !c.en || !c.pic) return;
+  custom.push(c); save('ak-custom', custom); buildWords(); drawBank(); drawChrome(); $('#stage details').open = true;
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && !$('#ov').hidden) { closeOv(); return; }
+  if (S.mode !== 'flash' || !$('#ov').hidden || /INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)) return;
+  if (e.key === 'ArrowRight') { e.preventDefault(); flashAnswer(true); }
+  else if (e.key === 'ArrowLeft') { e.preventDefault(); flashAnswer(false); }
+  else if (e.key === ' ' && document.activeElement.id === 'fcard') { e.preventDefault(); F.flip = !F.flip; drawFlash(); $('#fcard').focus(); }
+});
+window.addEventListener('resize', drawLines);
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(drawLines);
+
+const savedTheme = load('ak-theme', null);
+if (savedTheme === 'dark' || savedTheme === 'light') document.documentElement.setAttribute('data-theme', savedTheme);
+buildWords();
+render();
+</script>
+</body>
+</html>
